@@ -33,7 +33,10 @@ Wir wollen die Wahlscheibe auslesen, um die ausgewählte Nummer beispielhaft in 
 
 https://www.raspberry-pi-geek.de/ausgaben/rpg/2019/02/strom-und-spannungssensor-ina3221/
 
-#### Raspberry Pi 3 GPIO 40 Pins
+#### Arduino Uno R3
+
+![grafik](https://user-images.githubusercontent.com/69843539/228808262-680e2a32-f80f-4f46-8d08-755cfb9099ef.png)
+
 
 https://tutorials-raspberrypi.de/raspberry-pi-gpio-erklaerung-beginner-programmierung-lernen/
 
