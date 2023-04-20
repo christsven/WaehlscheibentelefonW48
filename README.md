@@ -2,7 +2,7 @@
 
 ## Beschreibung
 
-Im Rahmen dieses Projektes wollen wir eine die Wählscheibe eines W48 Telefons auslesbar machen, indem wir das Nummernelement per Sensor auslesen und an ein externes Ziel versenden.
+Im Rahmen dieses Projektes wollen wir eine die Wählscheibe eines W48 Telefons auslesbar machen, indem wir das Nummernelement per Sensor auslesen und an ein externes Ziel versenden. Dazu verwenden wir einen Arduino Uno, welcher für Stromzufuhr und Auslesen der elektrischen Spannung des Stromkreises sowie den Output der ausgelesenen Zahl zuständig ist.
 
 ## Prozesse
 
@@ -21,36 +21,85 @@ Der orangene Pfeil zeigt hier auf das Rad, welches den elektrischen Impuls steue
 
 Sobald eine Nummer ausgewählt wird, erzeugt der Nummernschalter eine bestimmte Anzahl elektrischer Impulse, die die Nummer darstellen `(Nummer n + 2 = Anzahl Impulse)`. Diese müssen wir auslesen und an ein Steuerelement weiterleiten.
 
-#### Spannungssensor
-
-Wir wollen die Wahlscheibe auslesen, um die ausgewählte Nummer beispielhaft in einer Datei auf einem anderen Gerät (Schul-PC) zu erfassen.
-
-##### Shunt
-
->Als Shunt bezeichnet man einen niederohmigen Messwiderstand, den man in einen Stromkreis einbaut, um indirekt den Strom zu messen. Dazu misst man die Spannung, die am Widerstand abfällt, und errechnet daraus den Strom. Mehrere Umstände erzwingen diesen Umweg: A/D-Wandler können keine Stromwerte messen, da sie sich dabei in den Stromkreis einklinken müssten. Hohe Ströme verursachen am Shunt eine entsprechende Verlustleistung, weswegen man ihn in der Regel vom eigentlichen Kreislauf zum Messen trennt.
-
->Der Shunt sollte möglichst geringe Toleranzwerte aufweisen, um die Messung nicht zu verfälschen. Bei der Strommessung fällt am Shunt auf jeden Fall eine Spannung (U=R x I) ab, die dann nicht mehr für den Verbraucher bereitsteht. Der Spannungsabfall am Shunt erzeugt eine an der Energiequelle gespeiste Verlustleistung (P=U x I), die immer Abwärme bedeutet. Bei Einsatz eines Shunts gilt es daher, immer die maximale Leistung des Bauteils zu beachten, sonst brennt es einfach ab.
-
-https://www.raspberry-pi-geek.de/ausgaben/rpg/2019/02/strom-und-spannungssensor-ina3221/
-
 #### Arduino Uno R3
 
 ![grafik](https://user-images.githubusercontent.com/69843539/228808262-680e2a32-f80f-4f46-8d08-755cfb9099ef.png)
 
-
-https://tutorials-raspberrypi.de/raspberry-pi-gpio-erklaerung-beginner-programmierung-lernen/
-
 ## Zielsetzung
 
-- [ ]	Konzeption der Hardwareelemente
-- [ ]	Erfassen der nötigen Hardwarekomponenten für
-- [ ]	Sensor für Wählscheibenausleser
-- [ ]	Iot-Controller (Raspberry Pi 3)
-- [ ]	Kabel (Strom, Patchkabel, Arduino)
-- [ ]	Netzteil
-- [ ]	Erstellen einer "Proof of Concept"-Modellierung der Softwareelemente in Packet Tracer
+- [x]	Konzeption der Hardwareelemente
+- [x]	Erfassen der nötigen Hardwarekomponenten für
+  - [x]	Sensor für Wählscheibenausleser
+  - [x]	Kabel (Strom, Patchkabel, Arduino)
+- [x]	Erstellen einer TinkerCAD-Darstellung des Arduino
+
+## Umsetzung
+
+### Code
+```
+void blinkFor(int times) {
+  int delayTime = 40;
+  int count = 0;
+  while (count < times) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(delayTime);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(delayTime);
+    count++;
+  }
+}
+void setup() {
+  Serial.begin(9600);
+  // Sets the onboard LED as our output
+  pinMode(LED_BUILTIN, OUTPUT);
+  // Gets the HIGH and LOW from Digital 2
+  pinMode(2, INPUT);
+  // Hello i am alive
+  Serial.println("Hello");
+  blinkFor(3);
+}
+void loop() {
+  int breaks = 0;
+  int counter = 0;
+  boolean done = false;
+  int input = digitalRead(2);
+  // Count breaks in a cluster
+  while (counter < 20) {
+    // Reset
+    done = false;
+    input = digitalRead(2);
+    // Count singular break
+    while (input == LOW) {
+      if (!done) {
+        // This if only gets executed once
+        done = true;
+        // Reset idle counter
+        counter = 0;
+        // Add to breaks counter
+        breaks++;
+      }
+      // Repeat until circuit gets closed again
+      input = digitalRead(2);
+    }
+    // Count idle time -> either new break or 20x wait
+    counter++;
+    // It does not work without this, i dont know why
+    delay(5);
+  }
+  // Output results
+  if (breaks != 0) {
+    //blinkFor(breaks);
+    Serial.print("Output: ");
+    Serial.print(breaks);
+    Serial.println();
+    // Reset
+    breaks = 0;
+  }
+}
+```
 
 # Quellen
-[Nummernschalter N38](https://elektronikbasteln.pl7.de/nummernschalter-n38)
-
-[Funktionsweise](https://elektronikbasteln.pl7.de/nummernschalter-funktionsweise)
+https://elektronikbasteln.pl7.de/nummernschalter-n38 </br>
+https://elektronikbasteln.pl7.de/nummernschalter-funktionsweise </br>
+https://www.raspberry-pi-geek.de/ausgaben/rpg/2019/02/strom-und-spannungssensor-ina3221/ </br>
+https://tutorials-raspberrypi.de/raspberry-pi-gpio-erklaerung-beginner-programmierung-lernen/ </br>
