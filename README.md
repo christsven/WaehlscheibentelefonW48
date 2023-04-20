@@ -25,6 +25,8 @@ Sobald eine Nummer ausgewählt wird, erzeugt der Nummernschalter eine bestimmte 
 
 ![grafik](https://user-images.githubusercontent.com/69843539/228808262-680e2a32-f80f-4f46-8d08-755cfb9099ef.png)
 
+Das blaue und das rote stellen die Verbindung an das Telefon dar.
+
 ## Zielsetzung
 
 - [x]	Konzeption der Hardwareelemente
